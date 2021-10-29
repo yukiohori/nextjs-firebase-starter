@@ -1,4 +1,4 @@
-export type Todo = {
+export type TodoType = {
   id: string;
   todo: string;
   isComplete: boolean;

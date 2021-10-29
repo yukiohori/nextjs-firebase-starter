@@ -1,10 +1,11 @@
 type Props = {
+  align?: string;
   children: React.ReactNode;
 };
 
-const Title = ({ children }: Props) => (
+const Title = ({ align = "text-center", children }: Props) => (
   <>
-    <h1 className="mb-4 font-bold">{children}</h1>
+    <h1 className={`mb-4 font-bold ${align}`}>{children}</h1>
   </>
 );
 
