@@ -4,7 +4,8 @@ import Title from "src/components/atoms/Title";
 import Spinner from "src/components/atoms/Spinner";
 import TodoTable from "src/components/organisms/TodoTable";
 
-import { firestore } from "src/lib/firebase";
+import { getCollection } from "src/lib/firebase";
+import { getDocs } from "firebase/firestore";
 import { TodoType } from "src/types/todo";
 import { useEffect, useState } from "react";
 
@@ -13,18 +14,18 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    firestore.collection("todos").onSnapshot((collection) => {
-      const data = collection.docs.map<TodoType>((doc) => ({
+    const fetchTodoList = async () => {
+      const snapshot = await getDocs(getCollection<TodoType>("todos"));
+      const todoList = snapshot.docs.map((doc: any) => ({
         id: doc.id,
         todo: doc.data().todo,
         isComplete: doc.data().isComplete,
         date: doc.data().date.toDate(),
       }));
-      console.log(data);
-
-      setTodos(data);
+      setTodos(todoList);
       setIsLoading(false);
-    });
+    };
+    fetchTodoList();
   }, []);
 
   return (
