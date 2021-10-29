@@ -1,2 +1,6 @@
-# nextjs-firebase-starter
-NextJS Firebase Starter Project
+## NextJS Firebase Starter Project
+
+- NextJS
+- Firebase
+- TailwindCSS
+- Recoil
