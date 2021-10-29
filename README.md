@@ -1,6 +1,6 @@
 ## NextJS Firebase Starter Project
 
-- NextJS
-- Firebase
+- NextJS 12
+- Firebase (v9)
 - TailwindCSS
 - Recoil
