@@ -16,7 +16,7 @@ const Index = () => {
   useEffect(() => {
     const fetchTodoList = async () => {
       const snapshot = await getDocs(getCollection<TodoType>("todos"));
-      const todoList = snapshot.docs.map((doc: any) => ({
+      const todoList = snapshot.docs.map((doc) => ({
         id: doc.id,
         todo: doc.data().todo,
         isComplete: doc.data().isComplete,
