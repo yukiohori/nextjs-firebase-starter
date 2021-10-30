@@ -8,7 +8,8 @@
 ## Todo List
 
 - [x] Todo CRUD
+- [ ] Recoil
 - [ ] E2E Test
 - [ ] Jest Test
 - [ ] DnD Todo
-- [ ] Recoil
+
