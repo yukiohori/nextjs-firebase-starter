@@ -11,7 +11,7 @@ const Dialog = ({ isOpen, onClose, children }: Props) => {
     return <></>;
   }
   return (
-    <div className="transition duration-500 ease-in-out fixed inset-0 z-50 overflow-auto bg-black bg-opacity-40 flex">
+    <div className="transition p-4 duration-500 ease-in-out fixed inset-0 z-50 overflow-auto bg-black bg-opacity-40 flex">
       <div className="relative p-8 bg-white w-full max-w-lg m-auto flex-col flex rounded-lg">
         <div>{children}</div>
         <span className="absolute top-0 right-0 p-4">

@@ -5,6 +5,7 @@ import {
   collection,
   doc,
   DocumentReference,
+  writeBatch,
 } from "firebase/firestore";
 
 const firebaseApp = initializeApp({
@@ -24,4 +25,8 @@ export function getCollection<T>(path: string): CollectionReference<T> {
 
 export function getDocument<T>(path: string): DocumentReference<T> {
   return doc(firestore, path) as DocumentReference<T>;
+}
+
+export function getBatch() {
+  return writeBatch(firestore);
 }

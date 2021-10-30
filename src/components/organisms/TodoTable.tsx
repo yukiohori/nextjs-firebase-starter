@@ -1,17 +1,47 @@
 import IconButton from "src/components/atoms/IconButton";
+import Checkbox from "../atoms/Checkbox";
 import type { TodoType } from "src/types/todo";
+import { useState } from "react";
 
 type Props = {
   todoList: TodoType[];
   addUpdateTodo: (selectedTodo: TodoType) => void;
+  deleteTodo: (selectedTodo: string[]) => void;
 };
 
-const Table = ({ todoList, addUpdateTodo }: Props) => {
+const Table = ({ todoList, addUpdateTodo, deleteTodo }: Props) => {
+  const [selectedTodods, setSelectedTodods] = useState<string[]>([]);
+
   return (
-    <table className="table-auto">
+    <table className="table-auto w-full">
       <thead>
         <tr>
-          <th className="px-4 py-2"></th>
+          <th className="hidden lg:table-cell px-4 py-2">
+            {selectedTodods.length > 0 && (
+              <IconButton
+                size="small"
+                icon={
+                  <svg
+                    className="w-5 h-5 animate-bounce"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M17 5V4C17 2.89543 16.1046 2 15 2H9C7.89543 2 7 2.89543 7 4V5H4C3.44772 5 3 5.44772 3 6C3 6.55228 3.44772 7 4 7H5V18C5 19.6569 6.34315 21 8 21H16C17.6569 21 19 19.6569 19 18V7H20C20.5523 7 21 6.55228 21 6C21 5.44772 20.5523 5 20 5H17ZM15 4H9V5H15V4ZM17 7H7V18C7 18.5523 7.44772 19 8 19H16C16.5523 19 17 18.5523 17 18V7Z"
+                      fill="currentColor"
+                    />
+                    <path d="M9 9H11V17H9V9Z" fill="currentColor" />
+                    <path d="M13 9H15V17H13V9Z" fill="currentColor" />
+                  </svg>
+                }
+                onClick={() => deleteTodo(selectedTodods)}
+              />
+            )}
+          </th>
+          <th className="hidden lg:table-cell px-4 py-2">EDIT</th>
           <th className="px-4 py-2">TODO</th>
           <th className="px-4 py-2">STATUS</th>
           <th className="px-4 py-2">DATE</th>
@@ -21,12 +51,29 @@ const Table = ({ todoList, addUpdateTodo }: Props) => {
         {todoList.map((todo) => {
           return (
             <tr key={todo.id}>
-              <td className="border px-4 py-2">
+              <td className="hidden lg:table-cell border w-10 px-8 py-2 text-center">
+                <Checkbox
+                  checked={selectedTodods.includes(todo.id || "")}
+                  onChange={(e: any) => {
+                    if (e.target.checked && todo.id) {
+                      selectedTodods.push(todo.id);
+                      setSelectedTodods([...selectedTodods]);
+                    } else {
+                      setSelectedTodods([
+                        ...selectedTodods.filter(
+                          (todoSelected) => todoSelected !== todo.id
+                        ),
+                      ]);
+                    }
+                  }}
+                />
+              </td>
+              <td className="hidden lg:table-cell border px-8 py-2 text-center">
                 <IconButton
+                  size="small"
                   icon={
                     <svg
-                      width="24"
-                      height="24"
+                      className="w-5 h-5"
                       viewBox="0 0 24 24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"

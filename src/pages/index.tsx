@@ -8,8 +8,8 @@ import IconButton from "src/components/atoms/IconButton";
 import Dialog from "src/components/molecules/Dialog";
 import Button from "src/components/atoms/Button";
 
-import { getDoc, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { getCollection, getDocument } from "src/lib/firebase";
+import { addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { getCollection, getDocument, getBatch } from "src/lib/firebase";
 import { getDocs } from "firebase/firestore";
 import { TodoType } from "src/types/todo";
 import { useEffect, useState } from "react";
@@ -61,6 +61,16 @@ const Index = () => {
     }
   };
 
+  const deleteTodo = async (deleteIds: string[]) => {
+    const batch = getBatch();
+    deleteIds.map((target) => {
+      const document = getDocument<TodoType>(`todos/${target}`);
+      batch.delete(document);
+    });
+    await batch.commit();
+    await fetchTodoList();
+  };
+
   return (
     <Main
       meta={
@@ -96,7 +106,11 @@ const Index = () => {
             <Spinner />
           </div>
         ) : (
-          <TodoTable todoList={todos} addUpdateTodo={addUpdateTodo} />
+          <TodoTable
+            deleteTodo={deleteTodo}
+            todoList={todos}
+            addUpdateTodo={addUpdateTodo}
+          />
         )}
       </div>
       <Dialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -104,14 +118,14 @@ const Index = () => {
           {formTodo.id ? "UPDATE TODO" : "ADD TODO"}
         </h3>
         <div className="p-4">
-          <span className="flex flex-row justify-between w-full">
+          <span className="flex flex-row items-center space-x-4 justify-between w-full">
             <p>TODO:</p>
             <input
               value={formTodo.todo}
               onChange={(e) =>
                 setFormTodo({ ...formTodo, ...{ todo: e.target.value } })
               }
-              className="border rounded px-2 py-1"
+              className="border rounded px-2 py-1 w-full"
               type="text"
             />
           </span>
