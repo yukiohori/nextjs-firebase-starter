@@ -7,7 +7,7 @@
 
 ## Todo List
 
-- [ ] Todo CRUD
+- [x] Todo CRUD
 - [ ] E2E Test
 - [ ] Jest Test
 - [ ] DnD Todo
