@@ -51,7 +51,8 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
-  const submitTodo = async () => {
+  const submitTodo = async (e: any) => {
+    e.preventDefault();
     if (formTodo.todo.trim().length) {
       formTodo.date = serverTimestamp();
       if (formTodo.id) {
@@ -89,12 +90,12 @@ const Index = () => {
       <div className="-z-10 w-screen h-screen fixed inset-0 bg-gradient-to-tl from-gray-700 via-gray-900 to-black" />
       <div className="bg-white rounded-lg p-4 my-20">
         <Title>TODO LIST</Title>
-        <div className="animate-bounce text-right">
+        <div className="text-right">
           <IconButton
             onClick={() => addUpdateTodo()}
             icon={
               <svg
-                className="w-6 h-6"
+                className="animate-bounce w-6 h-6"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,45 +123,47 @@ const Index = () => {
         )}
       </div>
       <Dialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h3 className="font-bold text-center text-3xl">
-          {formTodo.id ? "UPDATE TODO" : "ADD TODO"}
-        </h3>
-        <div className="p-4">
-          <span className="flex flex-row items-center space-x-4 justify-between w-full">
-            <p>TODO:</p>
-            <input
-              value={formTodo.todo}
-              onChange={(e) =>
-                setFormTodo({ ...formTodo, ...{ todo: e.target.value } })
-              }
-              className="border rounded px-2 py-1 w-full"
-              type="text"
-            />
-          </span>
-          {formTodo.id && (
-            <span className="flex flex-row items-center space-x-4 w-full mt-2">
-              <p>COMPLETE:</p>
-              <Checkbox
-                checked={formTodo.isComplete}
-                onChange={(e: any) => {
-                  setFormTodo({
-                    ...formTodo,
-                    ...{ isComplete: e.target.checked },
-                  });
-                }}
+        <form onSubmit={submitTodo}>
+          <h3 className="font-bold text-center text-3xl">
+            {formTodo.id ? "UPDATE TODO" : "ADD TODO"}
+          </h3>
+          <div className="p-4">
+            <span className="flex flex-row items-center space-x-4 justify-between w-full">
+              <p>TODO:</p>
+              <input
+                value={formTodo.todo}
+                onChange={(e) =>
+                  setFormTodo({ ...formTodo, ...{ todo: e.target.value } })
+                }
+                className="border rounded px-2 py-1 w-full"
+                type="text"
               />
             </span>
-          )}
-        </div>
-        <span className="w-full flex justify-center items-center">
-          <Button
-            backgroundColor="bg-gray-600"
-            borderFormat="rounded-md"
-            label="SUBMIT"
-            onClick={submitTodo}
-            textFormat="text-white font-bold"
-          />
-        </span>
+            {formTodo.id && (
+              <span className="flex flex-row items-center space-x-4 w-full mt-2">
+                <p>COMPLETE:</p>
+                <Checkbox
+                  checked={formTodo.isComplete}
+                  onChange={(e: any) => {
+                    setFormTodo({
+                      ...formTodo,
+                      ...{ isComplete: e.target.checked },
+                    });
+                  }}
+                />
+              </span>
+            )}
+          </div>
+          <span className="w-full flex justify-center items-center">
+            <Button
+              backgroundColor="bg-gray-600"
+              borderFormat="rounded-md"
+              type="submit"
+              label="SUBMIT"
+              textFormat="text-white font-bold"
+            />
+          </span>
+        </form>
       </Dialog>
       <ConfirmDialog
         isOpen={isConfirmOpen}

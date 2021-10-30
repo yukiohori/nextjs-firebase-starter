@@ -98,7 +98,7 @@ const Table = ({
                   onClick={() => addUpdateTodo(todo)}
                 />
               </td>
-              <td className="border w-3/5 px-4 py-2">{todo.todo}</td>
+              <td className="border w-3/5 px-4 py-2 break-all">{todo.todo}</td>
               <td className="border text-center w-1/5 px-4 py-2">
                 {todo.isComplete ? "DONE" : "DOING"}
               </td>

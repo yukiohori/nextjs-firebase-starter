@@ -4,6 +4,7 @@ export type Props = {
   borderFormat?: string;
   size?: "small" | "medium" | "large";
   label: string;
+  type?: "button" | "submit";
   onClick?: () => void;
 };
 
@@ -13,6 +14,7 @@ const Button = ({
   label,
   textFormat = "text-gray-600",
   borderFormat = "rounded-none",
+  type = "button",
   onClick,
 }: Props) => {
   const sizeFormat = () => {
@@ -30,7 +32,7 @@ const Button = ({
   return (
     <button
       onClick={onClick}
-      type="button"
+      type={type}
       className={`${sizeFormat()} ${backgroundColor} ${textFormat} ${borderFormat}`}
     >
       {label}
