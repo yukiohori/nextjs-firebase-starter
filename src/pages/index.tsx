@@ -42,6 +42,9 @@ const Index = () => {
       isComplete: doc.data().isComplete,
       date: doc.data().date.toDate(),
     }));
+    todoList.sort((a, b) => {
+      return new Date(b.date) > new Date(a.date) ? 1 : -1;
+    });
     setTodos(todoList);
     setIsLoading(false);
   };
