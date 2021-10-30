@@ -1,5 +1,6 @@
 import { Meta } from "src/layout/Meta";
 import { Main } from "src/templates/Main";
+import Link from "next/link";
 
 import Title from "src/components/atoms/Title";
 import Spinner from "src/components/atoms/Spinner";
@@ -92,6 +93,18 @@ const Index = () => {
     >
       <div className="-z-10 w-screen h-screen fixed inset-0 bg-gradient-to-tl from-gray-700 via-gray-900 to-black" />
       <div className="bg-white rounded-lg p-4 my-20">
+        <div className="w-full">
+          <Link href="/list">
+            <a>
+              <Button
+                backgroundColor="bg-gray-600"
+                borderFormat="rounded-md"
+                label="RECOIL TODO"
+                textFormat="text-white font-bold"
+              />
+            </a>
+          </Link>
+        </div>
         <Title>TODO LIST</Title>
         <div className="text-right">
           <IconButton

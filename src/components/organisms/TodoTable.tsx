@@ -53,9 +53,9 @@ const Table = ({
         </tr>
       </thead>
       <tbody>
-        {todoList.map((todo) => {
+        {todoList.map((todo, index: number) => {
           return (
-            <tr key={todo.id}>
+            <tr key={index}>
               <td className="hidden lg:table-cell border w-10 px-8 py-2 text-center">
                 <Checkbox
                   checked={selectedTodos.includes(todo.id || "")}
@@ -103,7 +103,7 @@ const Table = ({
                 {todo.isComplete ? "DONE" : "DOING"}
               </td>
               <td className="border w-1/5 px-4 py-2">
-                {todo.date.toDateString()}
+                {new Date(todo.date).toDateString()}
               </td>
             </tr>
           );

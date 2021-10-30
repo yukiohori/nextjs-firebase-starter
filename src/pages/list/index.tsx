@@ -1,8 +1,8 @@
 import { Meta } from "src/layout/Meta";
 import { Main } from "src/templates/Main";
+import Link from "next/link";
 
 import Title from "src/components/atoms/Title";
-import Spinner from "src/components/atoms/Spinner";
 import TodoTable from "src/components/organisms/TodoTable";
 import IconButton from "src/components/atoms/IconButton";
 import Dialog from "src/components/molecules/Dialog";
@@ -10,11 +10,11 @@ import ConfirmDialog from "src/components/molecules/ConfirmDialog";
 import Button from "src/components/atoms/Button";
 import Checkbox from "src/components/atoms/Checkbox";
 
-import { addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { getCollection, getDocument, getBatch } from "src/lib/firebase";
-import { getDocs } from "firebase/firestore";
+import { useSetRecoilState, useRecoilState } from "recoil";
+import { todoListState } from "src/states/todo";
+
 import { TodoType } from "src/types/todo";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const defaultTodo: TodoType = {
   todo: "",
@@ -23,31 +23,12 @@ const defaultTodo: TodoType = {
 };
 
 const Index = () => {
-  const [todos, setTodos] = useState<TodoType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [todos, setTodos] = useRecoilState(todoListState);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [formTodo, setFormTodo] = useState<TodoType>(defaultTodo);
   const [selectedTodos, setSelectedTodos] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetchTodoList();
-  }, []);
-
-  const fetchTodoList = async () => {
-    const snapshot = await getDocs(getCollection<TodoType>("todos"));
-    const todoList = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      todo: doc.data().todo,
-      isComplete: doc.data().isComplete,
-      date: doc.data().date.toDate(),
-    }));
-    todoList.sort((a, b) => {
-      return new Date(b.date) > new Date(a.date) ? 1 : -1;
-    });
-    setTodos(todoList);
-    setIsLoading(false);
-  };
+  const setTodoList = useSetRecoilState(todoListState);
 
   const addUpdateTodo = (selectedTodo: TodoType | null = null) => {
     setFormTodo(selectedTodo || defaultTodo);
@@ -57,29 +38,27 @@ const Index = () => {
   const submitTodo = async (e: any) => {
     e.preventDefault();
     if (formTodo.todo.trim().length) {
-      formTodo.date = serverTimestamp();
       if (formTodo.id) {
-        const document = getDocument<TodoType>(`todos/${formTodo.id}`);
-        await updateDoc(document, formTodo);
+        // setTodoList((oldTodoList) => {
+        //   let data = oldTodoList.find(todo => todo.id === formTodo.id)
+        //   if (data) data
+        //   return
+        // });
       } else {
-        await addDoc(getCollection<TodoType>("todos"), formTodo);
+        formTodo.date = new Date();
+        formTodo.id = new Date().getTime().toString();
+        setTodoList((oldTodoList) => [...oldTodoList, ...[formTodo]]);
       }
-      await fetchTodoList();
       setIsModalOpen(false);
     }
   };
 
   const deleteTodo = async () => {
-    const batch = getBatch();
-    selectedTodos.map((target) => {
-      const document = getDocument<TodoType>(`todos/${target}`);
-      batch.delete(document);
-    });
-    await batch.commit();
-    await fetchTodoList();
     setSelectedTodos([]);
     setIsConfirmOpen(false);
   };
+
+  console.log(todos);
 
   return (
     <Main
@@ -92,6 +71,18 @@ const Index = () => {
     >
       <div className="-z-10 w-screen h-screen fixed inset-0 bg-gradient-to-tl from-gray-700 via-gray-900 to-black" />
       <div className="bg-white rounded-lg p-4 my-20">
+        <div className="w-full">
+          <Link href="/">
+            <a>
+              <Button
+                backgroundColor="bg-gray-600"
+                borderFormat="rounded-md"
+                label="FIREBASE TODO"
+                textFormat="text-white font-bold"
+              />
+            </a>
+          </Link>
+        </div>
         <Title>TODO LIST</Title>
         <div className="text-right">
           <IconButton
@@ -111,11 +102,7 @@ const Index = () => {
             }
           />
         </div>
-        {isLoading ? (
-          <div className="h-96 flex items-center justify-center">
-            <Spinner />
-          </div>
-        ) : (
+        {todos.length > 0 && (
           <TodoTable
             selectedTodos={selectedTodos}
             setSelectedTodos={setSelectedTodos}
