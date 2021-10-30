@@ -10,6 +10,6 @@
 - [x] Todo CRUD
 - [ ] Recoil
 - [ ] E2E Test
-- [ ] Jest Test
+- [ ] Unit Test
 - [ ] DnD Todo
 
