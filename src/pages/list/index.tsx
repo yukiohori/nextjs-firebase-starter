@@ -23,7 +23,7 @@ const defaultTodo: TodoType = {
 };
 
 const Index = () => {
-  const [todos, setTodos] = useRecoilState(todoListState);
+  const [todos] = useRecoilState(todoListState);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [formTodo, setFormTodo] = useState<TodoType>(defaultTodo);
@@ -54,6 +54,9 @@ const Index = () => {
   };
 
   const deleteTodo = async () => {
+    setTodoList((oldTodoList) => [
+      ...oldTodoList.filter((todo) => !selectedTodos.includes(todo.id || "")),
+    ]);
     setSelectedTodos([]);
     setIsConfirmOpen(false);
   };
