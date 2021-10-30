@@ -1,23 +1,28 @@
 import IconButton from "src/components/atoms/IconButton";
 import Checkbox from "../atoms/Checkbox";
 import type { TodoType } from "src/types/todo";
-import { useState } from "react";
 
 type Props = {
   todoList: TodoType[];
+  selectedTodos: string[];
+  setSelectedTodos: (selectedTodoIds: string[]) => void;
   addUpdateTodo: (selectedTodo: TodoType) => void;
-  deleteTodo: (selectedTodo: string[]) => void;
+  deleteTodo: () => void;
 };
 
-const Table = ({ todoList, addUpdateTodo, deleteTodo }: Props) => {
-  const [selectedTodods, setSelectedTodods] = useState<string[]>([]);
-
+const Table = ({
+  todoList,
+  selectedTodos,
+  addUpdateTodo,
+  deleteTodo,
+  setSelectedTodos,
+}: Props) => {
   return (
     <table className="table-auto w-full">
       <thead>
         <tr>
           <th className="hidden lg:table-cell px-4 py-2">
-            {selectedTodods.length > 0 && (
+            {selectedTodos.length > 0 && (
               <IconButton
                 size="small"
                 icon={
@@ -37,7 +42,7 @@ const Table = ({ todoList, addUpdateTodo, deleteTodo }: Props) => {
                     <path d="M13 9H15V17H13V9Z" fill="currentColor" />
                   </svg>
                 }
-                onClick={() => deleteTodo(selectedTodods)}
+                onClick={deleteTodo}
               />
             )}
           </th>
@@ -53,14 +58,14 @@ const Table = ({ todoList, addUpdateTodo, deleteTodo }: Props) => {
             <tr key={todo.id}>
               <td className="hidden lg:table-cell border w-10 px-8 py-2 text-center">
                 <Checkbox
-                  checked={selectedTodods.includes(todo.id || "")}
+                  checked={selectedTodos.includes(todo.id || "")}
                   onChange={(e: any) => {
                     if (e.target.checked && todo.id) {
-                      selectedTodods.push(todo.id);
-                      setSelectedTodods([...selectedTodods]);
+                      selectedTodos.push(todo.id);
+                      setSelectedTodos([...selectedTodos]);
                     } else {
-                      setSelectedTodods([
-                        ...selectedTodods.filter(
+                      setSelectedTodos([
+                        ...selectedTodos.filter(
                           (todoSelected) => todoSelected !== todo.id
                         ),
                       ]);

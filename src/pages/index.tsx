@@ -6,6 +6,7 @@ import Spinner from "src/components/atoms/Spinner";
 import TodoTable from "src/components/organisms/TodoTable";
 import IconButton from "src/components/atoms/IconButton";
 import Dialog from "src/components/molecules/Dialog";
+import ConfirmDialog from "src/components/molecules/ConfirmDialog";
 import Button from "src/components/atoms/Button";
 
 import { addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
@@ -24,7 +25,9 @@ const Index = () => {
   const [todos, setTodos] = useState<TodoType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [formTodo, setFormTodo] = useState<TodoType>(defaultTodo);
+  const [selectedTodos, setSelectedTodos] = useState<string[]>([]);
 
   useEffect(() => {
     fetchTodoList();
@@ -61,14 +64,16 @@ const Index = () => {
     }
   };
 
-  const deleteTodo = async (deleteIds: string[]) => {
+  const deleteTodo = async () => {
     const batch = getBatch();
-    deleteIds.map((target) => {
+    selectedTodos.map((target) => {
       const document = getDocument<TodoType>(`todos/${target}`);
       batch.delete(document);
     });
     await batch.commit();
     await fetchTodoList();
+    setSelectedTodos([]);
+    setIsConfirmOpen(false);
   };
 
   return (
@@ -107,9 +112,11 @@ const Index = () => {
           </div>
         ) : (
           <TodoTable
-            deleteTodo={deleteTodo}
+            selectedTodos={selectedTodos}
+            setSelectedTodos={setSelectedTodos}
             todoList={todos}
             addUpdateTodo={addUpdateTodo}
+            deleteTodo={() => setIsConfirmOpen(true)}
           />
         )}
       </div>
@@ -140,6 +147,13 @@ const Index = () => {
           />
         </span>
       </Dialog>
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirmSubmit={deleteTodo}
+      >
+        <p className="text-center">ARE YOU SURE?</p>
+      </ConfirmDialog>
     </Main>
   );
 };

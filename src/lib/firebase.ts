@@ -19,14 +19,14 @@ const firebaseApp = initializeApp({
 
 const firestore = getFirestore(firebaseApp);
 
-export function getCollection<T>(path: string): CollectionReference<T> {
+export const getCollection = <T>(path: string): CollectionReference<T> => {
   return collection(firestore, path) as CollectionReference<T>;
-}
+};
 
-export function getDocument<T>(path: string): DocumentReference<T> {
+export const getDocument = <T>(path: string): DocumentReference<T> => {
   return doc(firestore, path) as DocumentReference<T>;
-}
+};
 
-export function getBatch() {
+export const getBatch = () => {
   return writeBatch(firestore);
-}
+};
