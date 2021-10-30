@@ -5,7 +5,7 @@ type Props = {
 
 const Title = ({ align = "text-center", children }: Props) => (
   <>
-    <h1 className={`mb-4 font-bold ${align}`}>{children}</h1>
+    <h1 className={`mb-4 font-bold text-5xl ${align}`}>{children}</h1>
   </>
 );
 
