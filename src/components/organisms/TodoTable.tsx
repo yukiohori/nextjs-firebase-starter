@@ -1,5 +1,5 @@
 import IconButton from "src/components/atoms/IconButton";
-import Checkbox from "../atoms/Checkbox";
+import Checkbox from "src/components/atoms/Checkbox";
 import type { TodoType } from "src/types/todo";
 
 type Props = {

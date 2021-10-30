@@ -8,6 +8,7 @@ import IconButton from "src/components/atoms/IconButton";
 import Dialog from "src/components/molecules/Dialog";
 import ConfirmDialog from "src/components/molecules/ConfirmDialog";
 import Button from "src/components/atoms/Button";
+import Checkbox from "src/components/atoms/Checkbox";
 
 import { addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getCollection, getDocument, getBatch } from "src/lib/firebase";
@@ -136,6 +137,20 @@ const Index = () => {
               type="text"
             />
           </span>
+          {formTodo.id && (
+            <span className="flex flex-row items-center space-x-4 w-full mt-2">
+              <p>COMPLETE:</p>
+              <Checkbox
+                checked={formTodo.isComplete}
+                onChange={(e: any) => {
+                  setFormTodo({
+                    ...formTodo,
+                    ...{ isComplete: e.target.checked },
+                  });
+                }}
+              />
+            </span>
+          )}
         </div>
         <span className="w-full flex justify-center items-center">
           <Button
