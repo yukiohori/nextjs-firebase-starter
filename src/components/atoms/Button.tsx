@@ -1,20 +1,18 @@
 export type Props = {
-  color?: string;
+  backgroundColor?: string;
   textFormat?: string;
   borderFormat?: string;
   size?: "small" | "medium" | "large";
-  label?: string;
-  icon: React.ReactNode;
+  label: string;
   onClick?: () => void;
 };
 
-const IconButton = ({
+const Button = ({
   size = "medium",
-  color = "gray",
+  backgroundColor = "bg-transparent",
   label,
-  textFormat = "font-bold",
+  textFormat = "text-gray-600",
   borderFormat = "rounded-none",
-  icon,
   onClick,
 }: Props) => {
   const sizeFormat = () => {
@@ -32,12 +30,12 @@ const IconButton = ({
   return (
     <button
       onClick={onClick}
-      className={`${sizeFormat()} bg-${color}-200 hover:bg-${color}-300 text-${color}-darkest ${textFormat} ${borderFormat} inline-flex items-center`}
+      type="button"
+      className={`${sizeFormat()} ${backgroundColor} ${textFormat} ${borderFormat}`}
     >
-      {icon}
-      <span>{label}</span>
+      {label}
     </button>
   );
 };
 
-export default IconButton;
+export default Button;

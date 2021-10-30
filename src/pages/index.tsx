@@ -5,31 +5,61 @@ import Title from "src/components/atoms/Title";
 import Spinner from "src/components/atoms/Spinner";
 import TodoTable from "src/components/organisms/TodoTable";
 import IconButton from "src/components/atoms/IconButton";
+import Dialog from "src/components/molecules/Dialog";
+import Button from "src/components/atoms/Button";
 
-import { getCollection } from "src/lib/firebase";
+import { getDoc, addDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { getCollection, getDocument } from "src/lib/firebase";
 import { getDocs } from "firebase/firestore";
 import { TodoType } from "src/types/todo";
 import { useEffect, useState } from "react";
+
+const defaultTodo: TodoType = {
+  todo: "",
+  isComplete: false,
+  date: "",
+};
 
 const Index = () => {
   const [todos, setTodos] = useState<TodoType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [formTodo, setFormTodo] = useState<TodoType>(defaultTodo);
 
   useEffect(() => {
-    const fetchTodoList = async () => {
-      const snapshot = await getDocs(getCollection<TodoType>("todos"));
-      const todoList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        todo: doc.data().todo,
-        isComplete: doc.data().isComplete,
-        date: doc.data().date.toDate(),
-      }));
-      setTodos(todoList);
-      setIsLoading(false);
-    };
     fetchTodoList();
   }, []);
+
+  const fetchTodoList = async () => {
+    const snapshot = await getDocs(getCollection<TodoType>("todos"));
+    const todoList = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      todo: doc.data().todo,
+      isComplete: doc.data().isComplete,
+      date: doc.data().date.toDate(),
+    }));
+    setTodos(todoList);
+    setIsLoading(false);
+  };
+
+  const addUpdateTodo = (selectedTodo: TodoType | null = null) => {
+    setFormTodo(selectedTodo || defaultTodo);
+    setIsModalOpen(true);
+  };
+
+  const submitTodo = async () => {
+    if (formTodo.todo.trim().length) {
+      formTodo.date = serverTimestamp();
+      if (formTodo.id) {
+        const document = getDocument<TodoType>(`todos/${formTodo.id}`);
+        await updateDoc(document, formTodo);
+      } else {
+        await addDoc(getCollection<TodoType>("todos"), formTodo);
+      }
+      await fetchTodoList();
+      setIsModalOpen(false);
+    }
+  };
 
   return (
     <Main
@@ -41,12 +71,12 @@ const Index = () => {
       }
     >
       <div className="-z-10 w-screen h-screen fixed inset-0 bg-gradient-to-tl from-gray-700 via-gray-900 to-black" />
-      <div className="bg-white rounded-lg p-4 mt-20">
+      <div className="bg-white rounded-lg p-4 my-20">
         <Title>TODO LIST</Title>
-        <div className="text-right">
+        <div className="animate-bounce text-right">
           <IconButton
-            onClick={() => setIsModalOpen(true)}
-            Icon={
+            onClick={() => addUpdateTodo()}
+            icon={
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
@@ -66,9 +96,36 @@ const Index = () => {
             <Spinner />
           </div>
         ) : (
-          <TodoTable todoList={todos} />
+          <TodoTable todoList={todos} addUpdateTodo={addUpdateTodo} />
         )}
       </div>
+      <Dialog isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <h3 className="font-bold text-center text-3xl">
+          {formTodo.id ? "UPDATE TODO" : "ADD TODO"}
+        </h3>
+        <div className="p-4">
+          <span className="flex flex-row justify-between w-full">
+            <p>TODO:</p>
+            <input
+              value={formTodo.todo}
+              onChange={(e) =>
+                setFormTodo({ ...formTodo, ...{ todo: e.target.value } })
+              }
+              className="border rounded px-2 py-1"
+              type="text"
+            />
+          </span>
+        </div>
+        <span className="w-full flex justify-center items-center">
+          <Button
+            backgroundColor="bg-gray-600"
+            borderFormat="rounded-md"
+            label="SUBMIT"
+            onClick={submitTodo}
+            textFormat="text-white font-bold"
+          />
+        </span>
+      </Dialog>
     </Main>
   );
 };

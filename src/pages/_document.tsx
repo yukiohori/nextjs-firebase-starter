@@ -6,7 +6,7 @@ import { AppConfig } from "src/utils/AppConfig";
 class MyDocument extends Document {
   render() {
     return (
-      <Html lang={AppConfig.locale}>
+      <Html lang={AppConfig.locale} className="scrollbar-hide">
         <Head />
         <body>
           <Main />
