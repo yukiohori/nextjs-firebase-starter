@@ -39,11 +39,14 @@ const Index = () => {
     e.preventDefault();
     if (formTodo.todo.trim().length) {
       if (formTodo.id) {
-        // setTodoList((oldTodoList) => {
-        //   let data = oldTodoList.find(todo => todo.id === formTodo.id)
-        //   if (data) data
-        //   return
-        // });
+        setTodoList((oldTodoList) => {
+          let updateList = [...oldTodoList];
+          let data = updateList.findIndex((todo) => todo.id === formTodo.id);
+          if (data > -1) {
+            updateList[data] = { ...formTodo };
+          }
+          return [...updateList];
+        });
       } else {
         formTodo.date = new Date();
         formTodo.id = new Date().getTime().toString();
@@ -60,8 +63,6 @@ const Index = () => {
     setSelectedTodos([]);
     setIsConfirmOpen(false);
   };
-
-  console.log(todos);
 
   return (
     <Main
