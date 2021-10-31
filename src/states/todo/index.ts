@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
 import { recoilPersist } from "recoil-persist";
 import { TodoType } from "src/types/todo";
 
@@ -10,4 +10,12 @@ const todoListState = atom<TodoType[]>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export { todoListState };
+const todoLength = selector({
+  key: "todoLength",
+  get: ({ get }) => {
+    const todoList = get(todoListState); // getの引数にstateを渡す。
+    return todoList.length;
+  },
+});
+
+export { todoListState, todoLength };

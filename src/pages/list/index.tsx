@@ -1,20 +1,24 @@
 import { Meta } from "src/layout/Meta";
 import { Main } from "src/templates/Main";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 import Title from "src/components/atoms/Title";
-import TodoTable from "src/components/organisms/TodoTable";
 import IconButton from "src/components/atoms/IconButton";
 import Dialog from "src/components/molecules/Dialog";
 import ConfirmDialog from "src/components/molecules/ConfirmDialog";
 import Button from "src/components/atoms/Button";
 import Checkbox from "src/components/atoms/Checkbox";
 
-import { useSetRecoilState, useRecoilState } from "recoil";
-import { todoListState } from "src/states/todo";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { todoListState, todoLength } from "src/states/todo";
 
 import { TodoType } from "src/types/todo";
 import { useState } from "react";
+
+const TodoTable = dynamic(() => import("src/components/organisms/TodoTable"), {
+  ssr: false,
+});
 
 const defaultTodo: TodoType = {
   todo: "",
@@ -23,12 +27,12 @@ const defaultTodo: TodoType = {
 };
 
 const Index = () => {
-  const [todos] = useRecoilState(todoListState);
+  const [todos, setTodoList] = useRecoilState(todoListState);
+  const todoListSize = useRecoilValue(todoLength);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [formTodo, setFormTodo] = useState<TodoType>(defaultTodo);
   const [selectedTodos, setSelectedTodos] = useState<string[]>([]);
-  const setTodoList = useSetRecoilState(todoListState);
 
   const addUpdateTodo = (selectedTodo: TodoType | null = null) => {
     setFormTodo(selectedTodo || defaultTodo);
@@ -48,7 +52,7 @@ const Index = () => {
           return [...updateList];
         });
       } else {
-        formTodo.date = new Date();
+        formTodo.date = new Date().toUTCString();
         formTodo.id = new Date().getTime().toString();
         setTodoList((oldTodoList) => [...oldTodoList, ...[formTodo]]);
       }
@@ -87,7 +91,7 @@ const Index = () => {
             </a>
           </Link>
         </div>
-        <Title>TODO LIST</Title>
+        <Title>TODO LIST ({todoListSize})</Title>
         <div className="text-right">
           <IconButton
             onClick={() => addUpdateTodo()}
